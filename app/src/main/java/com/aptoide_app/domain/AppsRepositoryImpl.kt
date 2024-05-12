@@ -1,7 +1,6 @@
 package com.aptoide_app.domain
 
 import android.util.Log
-import com.aptoide_app.data.mapper.toAppItem
 import com.aptoide_app.data.remote.AptoideApi
 import com.aptoide_app.data.remote.dto.AptitudeRetrieve
 import kotlinx.coroutines.flow.Flow
