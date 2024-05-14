@@ -8,7 +8,7 @@ espressoCore = "3.5.1"
 appcompat = "1.6.1"
 material = "1.12.0"
 dagger-hilt-version = "2.51"
-ksp-version = "1.9.24-1.0.20"
+ksp-version = "1.9.0-1.0.13"
 retrofit = "2.11.0"
 okHttpVersion = "5.0.0-alpha.14"
 compose-ui-version = "1.6.7"
@@ -18,7 +18,14 @@ material3-version = "1.2.1"
 activity-compose-version = "1.8.2"
 hilt-navigation-compose-version = "1.2.0"
 coil-version = "2.4.0"
-
+junit5-version = "5.8.2"
+junit-ext-version = "1.1.5"
+test-runner-version = "1.5.2"
+test-rules-version = "1.5.0"
+mockk-version = "1.13.5"
+lifecycle-test-version = "2.4.1"
+android-test-core-ktx-version = "1.5.0"
+coroutines-version = "1.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +43,15 @@ coil = { module = "io.coil-kt:coil-compose", version.ref = "coil-version" }
 
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel-compose-version" }
 
+junit5 = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit5-version" }
+junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit-ext-version" }
+ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-ui-version" }
+android-test-runner = { module = "androidx.test:runner", version.ref = "test-runner-version" }
+android-test-rules = { module = "androidx.test:rules", version.ref = "test-rules-version" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-version" }
+test-mockk = { module = "io.mockk:mockk", version.ref = "mockk-version" }
+test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "android-test-core-ktx-version" }
+test-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-testing", version.ref = "lifecycle-test-version" }
 
 # Hilt - Dependency Injection
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger-hilt-version" }

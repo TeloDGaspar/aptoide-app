@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
 }
 
@@ -55,9 +55,22 @@ dependencies {
     implementation(libs.okHttpLoggingInterceptor)
     implementation(rootProject.libs.compose.ui)
     implementation(rootProject.libs.hilt.android)
-    kapt(rootProject.libs.hilt.compiler)
+    ksp(rootProject.libs.hilt.compiler)
 
+    testImplementation(rootProject.libs.junit5)
+    testImplementation(rootProject.libs.test.mockk)
+    testImplementation(rootProject.libs.coroutines.test)
+    testImplementation(rootProject.libs.test.core.ktx)
 
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.34.0")
 }

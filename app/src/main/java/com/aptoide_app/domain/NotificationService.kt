@@ -22,14 +22,12 @@ class NotificationService(
             PendingIntent.FLAG_IMMUTABLE
         )
         val notification = NotificationCompat.Builder(context, COUNTER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Increment counter")
-            .setContentText("The count is ")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle("New Apps")
+            .setContentText("New applications available")
             .setContentIntent(activityPendingIntent)
             .build()
-
         notificationManager.notify(1, notification)
-
     }
     companion object {
         const val COUNTER_CHANNEL_ID = "counter_channel"

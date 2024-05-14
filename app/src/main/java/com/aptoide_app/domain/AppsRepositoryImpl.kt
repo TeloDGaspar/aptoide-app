@@ -1,100 +1,80 @@
 package com.aptoide_app.domain
 
-import android.util.Log
+import com.aptoide_app.data.local.FullDetailAppDao
+import com.aptoide_app.data.mapper.toEntity
+import com.aptoide_app.data.mapper.toObject
 import com.aptoide_app.data.remote.AptoideApi
-import com.aptoide_app.data.remote.dto.AptitudeRetrieve
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+/**
+ * Implementation of the AppsRepository interface.
+ *
+ * @property aptoideApi The API for fetching app data.
+ * @property fullDetailApp The DAO for accessing app data in the local database.
+ * @property dispatcher The CoroutineDispatcher on which this repository operates.
+ */
 class AppsRepositoryImpl @Inject constructor(
-    private val aptoideApi: AptoideApi
+    private val aptoideApi: AptoideApi,
+    private val fullDetailApp: FullDetailAppDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AppsRepository {
 
-    override fun allApps(): Flow<List<AppItem>> {
-        TODO()
-    }
+    /**
+     * Fetches app data from the API, maps the data to FullDetailApp objects,
+     * stores the data in the local database, and emits the data as a Flow.
+     *
+     * @return A Flow of a list of FullDetailApp objects.
+     */
+    fun getApps(): Flow<List<FullDetailApp>> = flow {
+        val response = runCatching { aptoideApi.getListings().execute() }
+        val listings = response.getOrNull()
+            ?.body()?.responses?.listApps?.datasets?.all?.data?.list?.map { app ->
+                FullDetailApp(
+                    app.added,
+                    app.apkTags,
+                    app.downloads,
+                    app.graphic ?: "",
+                    app.icon,
+                    app.id,
+                    app.md5sum,
+                    app.modified,
+                    app.name,
+                    app.packageX,
+                    app.pdownloads,
+                    app.rating,
+                    app.size,
+                    app.storeId,
+                    app.storeName,
+                    app.updated,
+                    app.uptype,
+                    app.vercode,
+                    app.vername
+                )
+            }?.sortedBy { it.name }
+        listings?.toEntity()?.forEach { fullDetailApp.insertAppDetails(it) }
+        emit(listings ?: emptyList())
+    }.flowOn(dispatcher)
 
-    override fun getAppItem(): Result<Flow<List<AppItem>>> {
-        return try {
-            val apps = TODO()
-            Result.success(apps)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+    /**
+     * Fetches app data from the local database, maps the data to FullDetailApp objects,
+     * and emits the data as a Flow.
+     *
+     * @return A Flow of a list of FullDetailApp objects.
+     */
+    override fun getAppsFromDataBase(): Flow<List<FullDetailApp>> = flow {
+        val fullDetailAppEntityList = fullDetailApp.getFullDetailApp()
+        emit(fullDetailAppEntityList.toObject())
+    }.flowOn(dispatcher)
 
-    private suspend fun getApps() : AptitudeRetrieve{
-        try {
-            Log.i("Devlog", "Fetching apps from server")
-            return aptoideApi.getListings()
-        } catch (e: Exception) {
-            Log.e("Devlog", "Error fetching apps from server: ${e.message}", e)
-            throw e // Rethrow the exception to propagate it to the caller
-        }
-    }
-
-
-    private fun getSimplefiedApps(): Flow<List<SimplifiedApp>> = flow {
-        try {
-            val response = getApps()
-            val listings = response.responses.listApps.datasets.all.data.list.map { app ->
-                SimplifiedApp(app.name, app.icon)
-            }
-            val sortedListings = listings.sortedBy { it.name }
-            emit(sortedListings)
-        } catch (e: Exception) {
-            emit(emptyList())
-            Log.e("Devlog1", "Error fetching simplified apps: ${e.message}", e)
-        }
-    }
-
-    private fun getFullDetailApps(): Flow<List<FullDetailApp>> = flow {
-        val response = getApps()
-        val listings = response.responses.listApps.datasets.all.data.list.map { app ->
-            FullDetailApp(
-                app.added,
-                app.apkTags,
-                app.downloads,
-                app.graphic ?: "",
-                app.icon,
-                app.id,
-                app.md5sum,
-                app.modified,
-                app.name,
-                app.packageX,
-                app.pdownloads,
-                app.rating,
-                app.size,
-                app.storeId,
-                app.storeName,
-                app.updated,
-                app.uptype,
-                app.vercode,
-                app.vername
-            )
-        }
-        val sortedListings = listings.sortedBy { it.name }
-        emit(sortedListings)
-    }
-
-    override fun getSimplifiedApps(): Result<Flow<List<SimplifiedApp>>> {
-        return try {
-            Log.i("Devlog","Throwa")
-            Result.success(getSimplefiedApps())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override fun getFullDetailsApps(): Result<Flow<List<FullDetailApp>>> {
-        return try {
-            Result.success(getFullDetailApps())
-        } catch (e: Exception) {
-
-            Result.failure(e)
-        }
-    }
-
-
+    /**
+     * Fetches app data by calling the getApps function and wraps the result in a Result object.
+     *
+     * @return A Result object containing a Flow of a list of FullDetailApp objects.
+     */
+    override fun getFullDetailsApps(): Result<Flow<List<FullDetailApp>>> = runCatching { getApps() }
 }
