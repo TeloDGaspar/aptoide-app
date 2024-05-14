@@ -1,8 +1,6 @@
 package com.aptoide_app.presentation.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -15,13 +13,19 @@ import androidx.compose.ui.Modifier
 import com.aptoide_app.domain.FullDetailApp
 import com.aptoide_app.presentation.ViewModelTest
 
+/**
+ * AppColumn is a composable function that displays a list of apps.
+ * It fetches the app details from the ViewModel and displays them in a LazyColumn.
+ * If the app details are not yet available, it displays a CircularProgressIndicator.
+ * When an app item is clicked, it opens an InfoDialog with the details of the selected app.
+ * When the download button of an app item is clicked, it opens a DownloadDialog.
+ */
 @Composable
 fun AppColumn(
-    viewModel: ViewModelTest, innerPadding: PaddingValues
+    viewModel: ViewModelTest
 ) {
-    val test = viewModel.fullDetailApp.collectAsState()
-    Log.i("test","MainActivity ${test.value}")
-    if (test.value.isEmpty()) {
+    val fullDetailApp = viewModel.fullDetailApp.collectAsState()
+    if (fullDetailApp.value.isEmpty()) {
         Box(
             contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
         ) {
@@ -29,7 +33,6 @@ fun AppColumn(
         }
         return
     } else {
-        val fullDetailApp = viewModel.fullDetailApp.collectAsState()
         val (showPopup, setShowPopup) = remember { mutableStateOf(false) }
         val (showPopupButton, setShowPopupButton) = remember { mutableStateOf(false) }
         val (selectedApp, setSelectedApp) = remember { mutableStateOf<FullDetailApp?>(null) }
@@ -45,8 +48,8 @@ fun AppColumn(
         if (showPopupButton) DownloadDialog(onDismissRequest = { setShowPopupButton(false) })
 
         LazyColumn {
-            items(test.value.size) { appIndex ->
-                val app = test.value[appIndex]
+            items(fullDetailApp.value.size) { appIndex ->
+                val app = fullDetailApp.value[appIndex]
                 AppItem(app = app,
                     onRowClick = { setSelectedApp(app); setShowPopup(true) },
                     onButtonClick = { setShowPopupButton(true) })

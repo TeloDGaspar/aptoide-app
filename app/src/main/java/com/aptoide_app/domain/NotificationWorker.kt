@@ -23,7 +23,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * NotificationWorker is a class that extends CoroutineWorker.
+ * It is used to perform background work in the application.
+ * This class is responsible for showing notifications.
+ */
 class NotificationWorker( context: Context,  params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {

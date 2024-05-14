@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     Column {
                         ImageApp(graphic = graphic, innerPadding = innerPadding)
                         Spacer(modifier = Modifier.width(16.dp))
-                        AppColumn(viewModel = viewModel, innerPadding = innerPadding)
+                        AppColumn(viewModel = viewModel)
                     }
                 }
             }

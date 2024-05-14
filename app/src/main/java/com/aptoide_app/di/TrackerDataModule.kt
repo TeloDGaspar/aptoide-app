@@ -1,6 +1,5 @@
 package com.aptoide_app.di
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.aptoide_app.data.local.AppDatabase
@@ -21,9 +20,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
+/**
+ * TrackerDataModule is a Dagger module that provides dependencies for the application.
+ * It provides instances of OkHttpClient, AptoideApi, Context, AppDatabase, FullDetailAppDao, ConnectivityObserver, and AppsRepository.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object TrackerDataModule {
@@ -73,9 +75,9 @@ object TrackerDataModule {
 
     @Provides
     @Singleton
-    fun provideApps(api: AptoideApi, fullDetailAppDao: FullDetailAppDao): AppsRepository = AppsRepositoryImpl(api,fullDetailAppDao)
+    fun provideNetwork(@ApplicationContext context: Context):ConnectivityObserver = NetworkConnectivityObserver(context)
 
     @Provides
     @Singleton
-    fun provideNetwork( @ApplicationContext context: Context):ConnectivityObserver = NetworkConnectivityObserver(context)
+    fun provideApps(api: AptoideApi, fullDetailAppDao: FullDetailAppDao, network: ConnectivityObserver): AppsRepository = AppsRepositoryImpl(api,fullDetailAppDao,network)
 }

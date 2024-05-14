@@ -4,6 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
+/**
+ * Represents a detailed app entity in the local database.
+ */
 @Entity
 data class FullDetailAppEntity(
     val added: String,

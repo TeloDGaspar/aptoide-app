@@ -1,5 +1,6 @@
 package com.aptoide_app.presentation.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -16,34 +17,38 @@ import androidx.compose.ui.graphics.Color
 import com.aptoide_app.domain.ConnectivityObserver
 import com.aptoide_app.presentation.ViewModelTest
 
+/**
+ * AppBar is a composable function that displays a top app bar with a title and actions.
+ * The actions change based on the network connectivity status.
+ * If the network is unavailable, it displays a "No Connectivity" text.
+ * If the network is available, it displays a refresh icon button that fetches full detail app when clicked.
+ *
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
     viewModel: ViewModelTest,
     composable: @Composable (PaddingValues) -> Unit
 ) {
-    val networkValue = viewModel.network.collectAsState().value
+    val networkStatus = viewModel.network.collectAsState().value
+    val isNetworkUnavailable = networkStatus == ConnectivityObserver.Status.Unavailable || networkStatus == ConnectivityObserver.Status.Lost
+
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color(0xFFFF9800)
-            ), title = {
-                Text("Aptoide", color = Color.White)
-            }, actions = {
-                if (networkValue != ConnectivityObserver.Status.Available) {
-                    Text(text = "No Connectivity")
-                    return@CenterAlignedTopAppBar
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFF9800)),
+                title = { Text("Aptoide", color = Color.White) },
+                actions = {
+                    if (isNetworkUnavailable) {
+                        Text(text = "No Connectivity")
+                    } else {
+                        IconButton(onClick = { viewModel.getFullDetailApp() }) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Search", tint = Color.White)
+                        }
+                    }
                 }
-                IconButton(onClick = { viewModel.getFullDetailApp() }) {
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = "Search",
-                        tint = Color.White
-                    )
-                }
-            })
+            )
         },
-    ) { innerPadding ->
-        composable(innerPadding)
-    }
+        content = composable
+    )
 }

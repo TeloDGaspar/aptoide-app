@@ -2,161 +2,166 @@ package com.aptoide_app
 
 import com.aptoide_app.data.local.FullDetailAppDao
 import com.aptoide_app.data.local.FullDetailAppEntity
-import com.aptoide_app.data.mapper.toObject
 import com.aptoide_app.data.remote.AptoideApi
-import com.aptoide_app.data.remote.dto.AptitudeRetrieve
-import com.aptoide_app.domain.AppsRepository
 import com.aptoide_app.domain.AppsRepositoryImpl
-import com.aptoide_app.domain.FullDetailApp
-import com.aptoide_app.domain.TestApp
+import com.aptoide_app.domain.ConnectivityObserver
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
-import kotlinx.coroutines.runBlocking
-import org.junit.Test
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
-import retrofit2.Call
-import retrofit2.Response
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
 
-    private val app1 = TestApp(
-        name = "app1"
-    )
-
-    private val app2 = TestApp(
-        name = "app2"
-    )
 
     private val aptoideApi: AptoideApi = mockk()
     private val fullDetailAppDao: FullDetailAppDao = mockk()
-    private val appsRepository = AppsRepositoryImpl(aptoideApi, fullDetailAppDao, Dispatchers.Unconfined)
+    private val connectivityObserver: ConnectivityObserver = mockk(relaxed = true)
+    val myScheduler = TestCoroutineScheduler()
+    private val dispatcher = UnconfinedTestDispatcher()
+    private lateinit var appsRepository: AppsRepositoryImpl
+
+    @Before
+    fun setup() {
+
+        appsRepository =
+            AppsRepositoryImpl(aptoideApi, fullDetailAppDao, connectivityObserver, dispatcher)
+    }
+
 
     @Test
-    fun `test getAppsFromDataBase when data available`() = runTest {
-        val fullDetailAppDao = mockk<FullDetailAppDao>()
-        val api = mockk<AptoideApi>()
-        val expectedData = listOf(
+    fun `getApps returns list of apps when data available`() = runTest(dispatcher) {
+        val expectedApps = listOf(
             FullDetailAppEntity(
-                added = "added",
+                added = "2022-01-01",
                 apkTags = listOf("tag1", "tag2"),
                 downloads = 1000,
-                graphic = "graphic",
-                icon = "icon",
+                graphic = "graphic_url",
+                icon = "icon_url",
                 id = 1,
                 md5sum = "md5sum",
-                modified = "modified",
-                name = "name",
-                packageX = "packageX",
+                modified = "2022-01-02",
+                name = "App Name",
+                packageX = "com.example.app",
                 pdownloads = 2000,
                 rating = 4.5,
                 size = 5000L,
                 storeId = 1,
-                storeName = "storeName",
-                updated = "updated",
+                storeName = "Store Name",
+                updated = "2022-01-03",
                 uptype = "uptype",
                 vercode = 1,
-                vername = "vername"
-            )
-        )
-        coEvery { fullDetailAppDao.getFullDetailApp() } returns expectedData
-        val repository = AppsRepositoryImpl(api, fullDetailAppDao, Dispatchers.Unconfined)
-        val result = repository.getAppsFromDataBase().toList().flatten()
-        coVerify { fullDetailAppDao.getFullDetailApp() }
-        assertEquals(expectedData.toObject(), result)
-    }
-
-    @Test
-    fun `get Full Details Apps Returns Empty List When Api Call Fails`() = runTest {
-        val exception = Exception("API call failed")
-        coEvery { aptoideApi.getListings() } throws exception
-
-        val result = appsRepository.getFullDetailsApps()
-
-        val actualData = result.getOrNull()?.toList()?.flatten()
-        val expectedData = emptyList<FullDetailApp>()
-
-        assertEquals(expectedData, actualData)
-    }
-
-    /*@Test
-    fun `getApps Returns List When Api Call Succeeds`() = runTest() {
-        val expectedData = listOf(
-            FullDetailApp(
-                added = "added",
-                apkTags = listOf("tag1", "tag2"),
-                downloads = 1000,
-                graphic = "graphic",
-                icon = "icon",
-                id = 1,
-                md5sum = "md5sum",
-                modified = "modified",
-                name = "name",
-                packageX = "packageX",
-                pdownloads = 2000,
-                rating = 4.5,
-                size = 5000L,
-                storeId = 1,
-                storeName = "storeName",
-                updated = "updated",
-                uptype = "uptype",
-                vercode = 1,
-                vername = "vername"
+                vername = "1.0.0"
             )
         )
 
-        // Create a mock Call object
-        val call: Call<AptitudeRetrieve> = mockk()
-
-        // Set up the mock Call to return a Response containing your expected data
-        every { call.execute() } returns Response.success(AptitudeRetrieve(expectedData))
-
-        // Set up aptoideApi.getListings() to return the mock Call
-        every { aptoideApi.getListings() } returns call
+        every { connectivityObserver.observe } returns MutableStateFlow(ConnectivityObserver.Status.Lost)
+        coEvery { fullDetailAppDao.getFullDetailApp() } returns expectedApps
 
         val result = appsRepository.getApps().toList().flatten()
-        assertEquals(expectedData, result)
-    }*/
 
-
+        assertEquals(expectedApps, result)
+    }
 
     @Test
-    fun `getApps Returns Empty List When Data Transformation Fails`() = runTest {
-        val malformedData = "malformed data"
-
-        // Create a mock AptitudeRetrieve object
-        val aptitudeRetrieve: AptitudeRetrieve = mockk(relaxed = true)
-
-        // Set up the mock AptitudeRetrieve to return your malformed data
-        every { aptitudeRetrieve.toString() } returns malformedData
-
-        // Create a mock Call object
-        val call: Call<AptitudeRetrieve> = mockk()
-
-        // Set up the mock Call to return a Response containing your mock AptitudeRetrieve
-        every { call.execute() } returns Response.success(aptitudeRetrieve)
-
-        // Set up aptoideApi.getListings() to return the mock Call
-        every { aptoideApi.getListings() } returns call
+    fun `getApps returns empty list when no data available`() = runTest() {
+        coEvery { fullDetailAppDao.getFullDetailApp() } returns emptyList()
 
         val result = appsRepository.getApps().toList().flatten()
+
         assertTrue(result.isEmpty())
+    }
+}
+
+
+
+class AptoideApiTest {
+
+    private lateinit var mockWebServer: MockWebServer
+    private lateinit var aptoideApi: AptoideApi
+
+    @Before
+    fun setup() {
+        mockWebServer = MockWebServer()
+        mockWebServer.start()
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+
+        aptoideApi = Retrofit.Builder()
+            .baseUrl(mockWebServer.url("/api/"))
+            .client(okHttpClient)
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+            .create(AptoideApi::class.java)
+    }
+
+    @After
+    fun teardown() {
+        mockWebServer.shutdown()
+    }
+
+    @Test
+    fun `get listings from API`()  {
+        // Arrange
+        val expectedResponse = """
+            {
+                "responses": {
+                    "listApps": {
+                        "datasets": {
+                            "all": {
+                                "data": {
+                                    "list": [
+                                        {
+                                            "id": 1,
+                                            "name": "App1",
+                                            "version": "1.0"
+                                        },
+                                        {
+                                            "id": 2,
+                                            "name": "App2",
+                                            "version": "1.1"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """.trimIndent()
+        mockWebServer.enqueue(MockResponse().setBody(expectedResponse))
+
+        // Act
+        val response = aptoideApi.getListings().execute()
+
+        // Assert
+        val actualResponse = response.body()
+        assertEquals(2, actualResponse?.responses?.listApps?.datasets?.all?.data?.list?.size)
+        assertEquals("App1", actualResponse?.responses?.listApps?.datasets?.all?.data?.list?.get(0)?.name)
+        assertEquals("App2", actualResponse?.responses?.listApps?.datasets?.all?.data?.list?.get(1)?.name)
     }
 }
