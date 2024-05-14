@@ -63,10 +63,11 @@ class AppsRepositoryImpl @Inject constructor(
                 ) {
                     val response = runCatching { aptoideApi.getListings().execute() }
                     val listings = convertToObject(response)
-                    updateDb(listings)
+
                     if (listings != null) {
                         if(listings.isNotEmpty()){
                             _fullDetailApp.value = listings
+                            updateDb(listings)
                         }
                     }else{
                         val localApps = fullDetailApp.getFullDetailApp()
