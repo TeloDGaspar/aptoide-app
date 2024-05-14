@@ -1,10 +1,11 @@
-package com.aptoide_app.domain
+package com.aptoide_app.domain.app
 
 import com.aptoide_app.data.local.FullDetailAppDao
 import com.aptoide_app.data.mapper.toEntity
 import com.aptoide_app.data.mapper.toObject
 import com.aptoide_app.data.remote.AptoideApi
 import com.aptoide_app.data.remote.dto.AptitudeRetrieve
+import com.aptoide_app.domain.connectivity.ConnectivityObserver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

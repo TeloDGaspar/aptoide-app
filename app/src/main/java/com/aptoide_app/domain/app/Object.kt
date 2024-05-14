@@ -1,4 +1,4 @@
-package com.aptoide_app.domain
+package com.aptoide_app.domain.app
 
 data class FullDetailApp(
     val added: String,

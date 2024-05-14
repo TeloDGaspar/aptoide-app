@@ -1,7 +1,7 @@
 package com.aptoide_app.data.mapper
 
 import com.aptoide_app.data.local.FullDetailAppEntity
-import com.aptoide_app.domain.FullDetailApp
+import com.aptoide_app.domain.app.FullDetailApp
 
 fun List<FullDetailApp>.toEntity(): List<FullDetailAppEntity> {
     return map { item ->

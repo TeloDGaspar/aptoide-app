@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
-import com.aptoide_app.domain.FullDetailApp
+import com.aptoide_app.domain.app.FullDetailApp
 
 @Composable
 fun InfoDialog(selectedApp: FullDetailApp, onDismissRequest: () -> Unit) {

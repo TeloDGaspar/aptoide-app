@@ -1,6 +1,5 @@
 package com.aptoide_app.presentation.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -14,7 +13,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
-import com.aptoide_app.domain.ConnectivityObserver
+import com.aptoide_app.domain.connectivity.ConnectivityObserver
 import com.aptoide_app.presentation.ViewModelTest
 
 /**

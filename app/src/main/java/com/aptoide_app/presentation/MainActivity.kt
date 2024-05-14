@@ -15,7 +15,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.aptoide_app.domain.NotificationWorker
+import com.aptoide_app.domain.notification.NotificationWorker
 import com.aptoide_app.presentation.composables.AppBar
 import com.aptoide_app.presentation.composables.AppColumn
 import com.aptoide_app.presentation.composables.ImageApp

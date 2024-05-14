@@ -1,6 +1,5 @@
-package com.aptoide_app.domain
+package com.aptoide_app.domain.connectivity
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface ConnectivityObserver {

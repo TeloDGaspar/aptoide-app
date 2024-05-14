@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.aptoide_app.domain.FullDetailApp
+import com.aptoide_app.domain.app.FullDetailApp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

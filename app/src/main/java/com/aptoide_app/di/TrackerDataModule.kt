@@ -5,10 +5,10 @@ import androidx.room.Room
 import com.aptoide_app.data.local.AppDatabase
 import com.aptoide_app.data.local.FullDetailAppDao
 import com.aptoide_app.data.remote.AptoideApi
-import com.aptoide_app.domain.AppsRepository
-import com.aptoide_app.domain.AppsRepositoryImpl
-import com.aptoide_app.domain.ConnectivityObserver
-import com.aptoide_app.domain.NetworkConnectivityObserver
+import com.aptoide_app.domain.app.AppsRepository
+import com.aptoide_app.domain.app.AppsRepositoryImpl
+import com.aptoide_app.domain.connectivity.ConnectivityObserver
+import com.aptoide_app.domain.connectivity.NetworkConnectivityObserver
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -75,7 +75,7 @@ object TrackerDataModule {
 
     @Provides
     @Singleton
-    fun provideNetwork(@ApplicationContext context: Context):ConnectivityObserver = NetworkConnectivityObserver(context)
+    fun provideNetwork(@ApplicationContext context: Context): ConnectivityObserver = NetworkConnectivityObserver(context)
 
     @Provides
     @Singleton

@@ -3,17 +3,15 @@ package com.aptoide_app.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aptoide_app.domain.AppsRepository
-import com.aptoide_app.domain.ConnectivityObserver
-import com.aptoide_app.domain.FullDetailApp
+import com.aptoide_app.domain.app.AppsRepository
+import com.aptoide_app.domain.connectivity.ConnectivityObserver
+import com.aptoide_app.domain.app.FullDetailApp
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,7 +48,6 @@ class ViewModelTest @Inject constructor(
         apps.getFullDetailsApps().fold(onSuccess = { response ->
             response.onEach { appItems ->
                 _fullDetailApp.value = appItems
-                Log.i("response", "fullDetailApp ${fullDetailApp}")
             }.launchIn(viewModelScope)
         }, onFailure = { throwable ->
             _isLoading.value = false

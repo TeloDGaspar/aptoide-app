@@ -10,7 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.aptoide_app.domain.FullDetailApp
+import com.aptoide_app.domain.app.FullDetailApp
 import com.aptoide_app.presentation.ViewModelTest
 
 /**

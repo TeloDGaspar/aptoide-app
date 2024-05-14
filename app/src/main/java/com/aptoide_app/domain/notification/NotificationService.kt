@@ -1,4 +1,4 @@
-package com.aptoide_app.domain
+package com.aptoide_app.domain.notification
 
 import android.app.NotificationManager
 import android.app.PendingIntent

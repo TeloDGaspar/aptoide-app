@@ -28,3 +28,4 @@ If given more time, the following improvements could be made:
 - Implement a more robust error handling system for network requests.
 - Improve the user interface for a more engaging user experience.
 - Database Optimization: Review the database queries and optimize them for better performance.
+- Implement more tests to ensure the application is working as expected.

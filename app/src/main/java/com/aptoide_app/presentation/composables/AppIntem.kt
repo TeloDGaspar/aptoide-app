@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.aptoide_app.domain.FullDetailApp
+import com.aptoide_app.domain.app.FullDetailApp
 
 @Composable
 fun AppItem(app: FullDetailApp, onRowClick: () -> Unit, onButtonClick: () -> Unit) {
